@@ -7,16 +7,18 @@ import TextInput from "../../components/TextInput/TextInput";
 
 function UpdateBlog() {
   const navigate = useNavigate();
-
-  const params = useParams();
-  const blogId = params.id;
+  const { id: blogId } = useParams();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [photo, setPhoto] = useState("");
 
+  const author = useSelector((state) => state.user._id);
+
   const getPhoto = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
+    if (!file) return;
+
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -24,66 +26,63 @@ function UpdateBlog() {
     };
   };
 
-  const author = useSelector((state) => state.user._id);
-
   const updateHandler = async () => {
-    // http:backend_server:port/storage/filename.png
-    // base64
-    let data;
-    if (photo.includes("http")) {
-      data = {
+    try {
+      const data = {
         author,
         title,
         content,
         blogId,
+        ...(photo.includes("http") ? {} : { photo }),
       };
-    } else {
-      data = {
-        author,
-        title,
-        content,
-        photo,
-        blogId,
-      };
-    }
 
-    const response = await updateBlog(data);
-
-    if (response.status === 200) {
-      navigate("/");
+      const response = await updateBlog(data);
+      if (response.status === 200) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Error updating blog:", error);
     }
   };
 
   useEffect(() => {
     async function getBlogDetails() {
-      const response = await getBlogById(blogId);
-      if (response.status === 200) {
-        setTitle(response.data.blog.title);
-        setContent(response.data.blog.content);
-        setPhoto(response.data.blog.photo);
+      try {
+        const response = await getBlogById(blogId);
+        if (response.status === 200) {
+          const blog = response.data.blog;
+          setTitle(blog.title);
+          setContent(blog.content);
+          setPhoto(blog.photo);
+        }
+      } catch (error) {
+        console.error("Failed to load blog details:", error);
       }
     }
     getBlogDetails();
-  }, []);
+  }, [blogId]);
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>Edit your blog</div>
+
       <TextInput
         type="text"
         name="title"
-        placeholder="title"
+        placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         style={{ width: "60%" }}
       />
+
       <textarea
         className={styles.content}
-        placeholder="your content goes here..."
+        placeholder="Your content goes here..."
         maxLength={400}
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
+
       <div className={styles.photoPrompt}>
         <p>Choose a photo</p>
         <input
@@ -93,8 +92,16 @@ function UpdateBlog() {
           accept="image/jpg, image/jpeg, image/png"
           onChange={getPhoto}
         />
-        <img src={photo} width={150} height={150} />
+        {photo && (
+          <img
+            src={photo}
+            width={150}
+            height={150}
+            alt="Selected blog preview"
+          />
+        )}
       </div>
+
       <button className={styles.update} onClick={updateHandler}>
         Update
       </button>

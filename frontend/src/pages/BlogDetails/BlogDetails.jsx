@@ -1,28 +1,25 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   getBlogById,
   deleteBlog,
   postComment,
   getCommentsById,
 } from "../../api/internal";
-import { useNavigate } from "react-router-dom";
 import Loader from "../../components/Loader/Loader";
 import styles from "./BlogDetails.module.css";
 import CommentList from "../../components/CommentList/CommentList";
 
 function BlogDetails() {
-  const [blog, setBlog] = useState([]);
+  const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [ownsBlog, setOwnsBlog] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [reload, setReload] = useState(false);
 
   const navigate = useNavigate();
-
-  const params = useParams();
-  const blogId = params.id;
+  const { id: blogId } = useParams();
 
   const username = useSelector((state) => state.user.username);
   const userId = useSelector((state) => state.user._id);
@@ -36,13 +33,13 @@ function BlogDetails() {
 
       const blogResponse = await getBlogById(blogId);
       if (blogResponse.status === 200) {
-        // set ownership
         setOwnsBlog(username === blogResponse.data.blog.authorUsername);
         setBlog(blogResponse.data.blog);
       }
     }
+
     getBlogDetails();
-  }, [reload]);
+  }, [reload, blogId, username]);
 
   const postCommentHandler = async () => {
     const data = {
@@ -67,7 +64,7 @@ function BlogDetails() {
     }
   };
 
-  if (blog.length === 0) {
+  if (!blog || !blog._id) {
     return <Loader text="blog details" />;
   }
 
@@ -77,27 +74,32 @@ function BlogDetails() {
         <h1 className={styles.title}>{blog.title}</h1>
         <div className={styles.meta}>
           <p>
-            @
-            {blog.authorUsername +
+            @{blog.authorUsername +
               " on " +
               new Date(blog.createdAt).toDateString()}
           </p>
         </div>
         <div className={styles.photo}>
-          <img src={blog.photo} width={250} height={250} />
+          <img
+            src={blog.photo}
+            width={250}
+            height={250}
+            alt={blog.title}
+          />
         </div>
         <p className={styles.content}>{blog.content}</p>
         {ownsBlog && (
           <div className={styles.controls}>
             <button
               className={styles.editButton}
-              onClick={() => {
-                navigate(`/blog-update/${blog._id}`);
-              }}
+              onClick={() => navigate(`/blog-update/${blog._id}`)}
             >
               Edit
             </button>
-            <button className={styles.deleteButton} onClick={deleteBlogHandler}>
+            <button
+              className={styles.deleteButton}
+              onClick={deleteBlogHandler}
+            >
               Delete
             </button>
           </div>

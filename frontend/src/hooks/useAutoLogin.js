@@ -36,7 +36,7 @@ function useAutoLogin() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [dispatch]);
 
   return loading;
 }
