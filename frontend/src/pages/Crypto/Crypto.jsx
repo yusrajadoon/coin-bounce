@@ -46,7 +46,7 @@ function Crypto() {
             <td>{coin.market_cap_rank}</td>
             <td>
               <div className={styles.logo}>
-                <img src={coin.image} width={40} height={40} /> {coin.name}
+                <img src={coin.image} width={40} height={40}  alt="COIN IMAGE"/> {coin.name}
               </div>
             </td>
             <td>

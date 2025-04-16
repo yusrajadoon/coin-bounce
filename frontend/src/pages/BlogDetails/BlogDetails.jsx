@@ -49,16 +49,14 @@ function BlogDetails() {
     };
 
     const response = await postComment(data);
-
     if (response.status === 201) {
       setNewComment("");
-      setReload(!reload);
+      setReload((prev) => !prev);
     }
   };
 
   const deleteBlogHandler = async () => {
     const response = await deleteBlog(blogId);
-
     if (response.status === 200) {
       navigate("/");
     }
@@ -84,7 +82,7 @@ function BlogDetails() {
             src={blog.photo}
             width={250}
             height={250}
-            alt={blog.title}
+            alt={blog.title} // ✅ Correct alt attribute
           />
         </div>
         <p className={styles.content}>{blog.content}</p>

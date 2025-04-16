@@ -7,20 +7,26 @@ function Home() {
   const [articles, setArticles] = useState([]);
 
   useEffect(() => {
+    let isMounted = true;
+
     (async function newsApiCall() {
       const response = await getNews();
-      setArticles(response);
+      if (isMounted) {
+        setArticles(response);
+      }
     })();
 
-    // cleanup function
-    setArticles([]);
+    // proper cleanup function
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleCardClick = (url) => {
     window.open(url, "_blank");
   };
 
-  if (articles.length == 0) {
+  if (articles.length === 0) {
     return <Loader text="homepage" />;
   }
 
@@ -34,7 +40,12 @@ function Home() {
             key={article.url}
             onClick={() => handleCardClick(article.url)}
           >
-            <img src={article.urlToImage} />
+            {article.urlToImage && (
+              <img
+                src={article.urlToImage}
+                alt={article.title || "article image"}
+              />
+            )}
             <h3>{article.title}</h3>
           </div>
         ))}

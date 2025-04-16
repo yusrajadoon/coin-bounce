@@ -65,7 +65,7 @@ function SubmitBlog() {
           accept="image/jpg, image/jpeg, image/png"
           onChange={getPhoto}
         />
-        {photo !== "" ? <img src={photo} width={150} height={150} /> : ""}
+        {photo !== "" ? <img src={photo} width={150} height={150} alt="Blog image"/> : ""}
       </div>
       <button
         className={styles.submit}

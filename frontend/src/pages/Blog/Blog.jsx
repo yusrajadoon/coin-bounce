@@ -33,7 +33,7 @@ function Blog() {
           onClick={() => navigate(`/blog/${blog._id}`)}
         >
           <h1>{blog.title}</h1>
-          <img src={blog.photo} />
+          <img src={blog.photo} alt="Blog banner"/>
           <p>{blog.content}</p>
         </div>
       ))}
