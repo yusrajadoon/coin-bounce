@@ -73,7 +73,7 @@ function SubmitBlog() {
             src={photo}
             width={150}
             height={150}
-            alt="Preview"
+            alt=""
           />
         )}
       </div>

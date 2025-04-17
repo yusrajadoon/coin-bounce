@@ -49,7 +49,7 @@ function Crypto() {
                   src={coin.image}
                   width={40}
                   height={40}
-                  alt={`${coin.name} logo`} // ✅ Descriptive alt text
+                  alt=""// ✅ Descriptive alt text
                 />
                 {coin.name}
               </div>
