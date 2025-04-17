@@ -41,21 +41,24 @@ function SubmitBlog() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>Create a blog!</div>
+
       <TextInput
         type="text"
         name="title"
-        placeholder="title"
+        placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         style={{ width: "60%" }}
       />
+
       <textarea
         className={styles.content}
-        placeholder="your content goes here..."
+        placeholder="Your content goes here..."
         maxLength={400}
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
+
       <div className={styles.photoPrompt}>
         <p>Choose a photo</p>
         <input
@@ -65,12 +68,20 @@ function SubmitBlog() {
           accept="image/jpg, image/jpeg, image/png"
           onChange={getPhoto}
         />
-        {photo !== "" ? <img src={photo} width={150} height={150} alt="Blog image"/> : ""}
+        {photo && (
+          <img
+            src={photo}
+            width={150}
+            height={150}
+            alt="Preview"
+          />
+        )}
       </div>
+
       <button
         className={styles.submit}
         onClick={submitHandler}
-        disabled={title === "" || content === "" || photo === ""}
+        disabled={!title || !content || !photo}
       >
         Submit
       </button>

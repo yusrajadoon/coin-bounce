@@ -7,18 +7,17 @@ function Crypto() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    // IIFE: immediately invoked function expression
     (async function cryptoApiCall() {
       const response = await getCrypto();
       setData(response);
     })();
 
-    // Cleanup
-    setData([]);
+    // Optional cleanup logic if needed in the future
+    return () => setData([]);
   }, []);
 
   if (data.length === 0) {
-    return <Loader text="crytocurrenices" />;
+    return <Loader text="cryptocurrencies" />; // ✅ Typo fixed
   }
 
   const negativeStyle = {
@@ -42,17 +41,23 @@ function Crypto() {
       </thead>
       <tbody>
         {data.map((coin) => (
-          <tr id={coin.id} className={styles.tableRow}>
+          <tr key={coin.id} className={styles.tableRow}> {/* ✅ Use key instead of id */}
             <td>{coin.market_cap_rank}</td>
             <td>
               <div className={styles.logo}>
-                <img src={coin.image} width={40} height={40}  alt="COIN IMAGE"/> {coin.name}
+                <img
+                  src={coin.image}
+                  width={40}
+                  height={40}
+                  alt={`${coin.name} logo`} // ✅ Descriptive alt text
+                />
+                {coin.name}
               </div>
             </td>
             <td>
-              <div className={styles.symbol}>{coin.symbol}</div>
+              <div className={styles.symbol}>{coin.symbol.toUpperCase()}</div>
             </td>
-            <td>{coin.current_price}</td>
+            <td>${coin.current_price.toLocaleString()}</td>
             <td
               style={
                 coin.price_change_percentage_24h < 0
@@ -60,7 +65,7 @@ function Crypto() {
                   : positiveStyle
               }
             >
-              {coin.price_change_percentage_24h}
+              {coin.price_change_percentage_24h.toFixed(2)}%
             </td>
           </tr>
         ))}
