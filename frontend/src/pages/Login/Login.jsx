@@ -90,7 +90,7 @@ function Login() {
         </button>
       </span>
 
-      {error !== "" && <p className={styles.errorMessage}>{error}</p>} {/* ✅ strict equality */}
+      {error !== "" && <p className={styles.errorMessage}>{error}</p>} ✅
     </form>
   );
 }
